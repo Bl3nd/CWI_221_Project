@@ -38,47 +38,187 @@ public class IUArrayList<E> implements IndexedUnsortedList<E> {
 
 	@Override
 	public void addToFront(E element) {
-		// TODO 
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		for (int i = rear; i > 0; i--) {
+			array[i] = array[i - 1];
+		}
+		array[0] = element;
+		rear++;
 		modCount++; // DO NOT REMOVE ME
-		
 	}
 
 	@Override
 	public void addToRear(E element) {
-		// TODO 
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		array[rear] = element;
+		rear++;
 		modCount++; // DO NOT REMOVE ME
 	}
 
 	@Override
 	public void add(E element) {
-		// TODO 
+		if (rear == array.length) {
+			expandCapacity();
+		}
+		array[rear] = element;
+		rear++;
 		modCount++; // DO NOT REMOVE ME
 	}
 
 	@Override
 	public void addAfter(E element, E target) {
-		// TODO 
+		int index = indexOf(target);
+		if (index == NOT_FOUND) {
+			throw new NoSuchElementException();
+		}
+
+		if (rear == array.length) {
+			expandCapacity();
+		}
+
+		for (int i = rear; i > index + 1; i--) {
+			array[i] = array[i - 1];
+		}
+
+		array[index + 1] = element;
+		rear++;
 		modCount++; // DO NOT REMOVE ME
 	}
 
 	@Override
 	public void add(int index, E element) {
-		// TODO 
+		if (index < 0 || index > rear) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		if (rear == array.length) {
+			expandCapacity();
+		}
+
+		for (int i = rear; i > index; i--) {
+			array[i] = array[i - 1];
+		}
+
+		array[index] = element;
+		rear++;
 		modCount++; // DO NOT REMOVE ME
 	}
 
 	@Override
 	public E removeFirst() {
-		// TODO 
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+
+		E removed = array[0];
+
+		for (int i = 0; i < rear - 1; i++) {
+			array[i] = array[i + 1];
+		}
+
+		rear--;
+		array[rear] = null;
+
 		modCount++; // DO NOT REMOVE ME
-		return null;
+		return removed;
 	}
 
 	@Override
 	public E removeLast() {
-		// TODO 
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+
+		rear--;
+		E removed = array[rear];
+		array[rear] = null;
+
 		modCount++; // DO NOT REMOVE ME
-		return null;
+		return removed;
+	}
+
+	@Override
+	public E remove(int index) {
+		if (index < 0 || index >= rear) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		E removed = array[index];
+
+		for (int i = index; i < rear - 1; i++) {
+			array[i] = array[i + 1];
+		}
+
+		rear--;
+		array[rear] = null;
+
+		modCount++; // DO NOT REMOVE ME
+		return removed;
+	}
+
+	@Override
+	public void set(int index, E element) {
+		if (index < 0 || index >= rear) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		array[index] = element;
+		modCount++; // DO NOT REMOVE ME
+	}
+
+	@Override
+	public E get(int index) {
+		if (index < 0 || index >= rear) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		return array[index];
+	}
+
+	@Override
+	public E first() {
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		return array[0];
+	}
+
+	@Override
+	public E last() {
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		return array[rear - 1];
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return rear == 0;
+	}
+
+	@Override
+	public int size() {
+		return rear;
+	}
+
+	@Override
+	public int indexOf(E element) {
+		for (int i = 0; i < rear; i++) {
+			if ((array[i] == null && element == null) ||
+				(array[i] != null && array[i].equals(element))) {
+				return i;
+			}
+		}
+		return NOT_FOUND;
+	}
+
+	@Override
+	public boolean contains(E element) {
+		return indexOf(element) != NOT_FOUND;
 	}
 
 	@Override
@@ -87,94 +227,24 @@ public class IUArrayList<E> implements IndexedUnsortedList<E> {
 		if (index == NOT_FOUND) {
 			throw new NoSuchElementException();
 		}
-		
-		E retVal = array[index];
-		
-		rear--;
-		//shift elements
-		for (int i = index; i < rear; i++) {
-			array[i] = array[i+1];
-		}
-		array[rear] = null;
-
-		modCount++; // DO NOT REMOVE ME
-		return retVal;
-	}
-
-	@Override
-	public E remove(int index) {
-		// TODO 
-		modCount++; // DO NOT REMOVE ME
-		return null;
-	}
-
-	@Override
-	public void set(int index, E element) {
-		// TODO 
-		modCount++; // DO NOT REMOVE ME
-	}
-
-	@Override
-	public E get(int index) {
-		// TODO 
-		return null;
-	}
-
-	@Override
-	public int indexOf(E element) {
-		int index = NOT_FOUND;
-		
-		if (!isEmpty()) {
-			int i = 0;
-			while (index == NOT_FOUND && i < rear) {
-				if (element.equals(array[i])) {
-					index = i;
-				} else {
-					i++;
-				}
-			}
-		}
-		
-		return index;
-	}
-
-	@Override
-	public E first() {
-		// TODO 
-		return null;
-	}
-
-	@Override
-	public E last() {
-		// TODO 
-		return null;
-	}
-
-	@Override
-	public boolean contains(E target) {
-		return (indexOf(target) != NOT_FOUND);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		// TODO 
-		return false;
-	}
-
-	@Override
-	public int size() {
-		// TODO 
-		return 0;
+		return remove(index);
 	}
 
 	@Override
 	public String toString() {
 		String result = "[";
-		// TODO
-		return result + "]";
+		for (int i = 0; i < rear; i++) {
+			result += array[i];
+			if (i < rear - 1) {
+				result += ", ";
+			}
+		}
+		result += "]";
+		return result;
 	}
 
 	// IGNORE THE FOLLOWING COMMENTED OUT CODE UNTIL LAB 10
+
 	// DON'T DELETE ME, HOWEVER!!!
 	public Iterator<E> iterator() {
 		// return new IUArrayListIterator(); // UNCOMMENT ME IN LAB 10
