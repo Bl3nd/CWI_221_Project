@@ -54,6 +54,7 @@ public class IUArrayList<E> implements IndexedUnsortedList<E> {
 		if (rear == array.length) {
 			expandCapacity();
 		}
+
 		array[rear] = element;
 		rear++;
 		modCount++; // DO NOT REMOVE ME
