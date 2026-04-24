@@ -9,339 +9,290 @@ import java.util.*;
  * 
  * @param <E> type to store
  */
+
 public class IUSingleLinkedList<E> implements IndexedUnsortedList<E> {
-	private LinearNode<E> front, rear;
-	private int count;
-	private int modCount;
 
-	/** Creates an empty list */
-	public IUSingleLinkedList() {
-		front = rear = null;
-		count = 0;
-		modCount = 0;
-	}
+    private LinearNode<E> head;
+    private LinearNode<E> rear;
+    private int size;
+    private int modCount;
 
-	@Override
-	public void addToFront(E element) {
-		LinearNode<E> newNode = new LinearNode<>(element);
-		newNode.setNext(front);
-		front = newNode;
+    public IUSingleLinkedList() {
+        head = rear = null;
+        size = 0;
+        modCount = 0;
+    }
 
-		if (count == 0) {
-			rear = front;
-		}
+    // ---------- ADD METHODS ----------
 
-		count++;
-		modCount++;
-	}
+    public void addToFront(E element) {
+        LinearNode<E> node = new LinearNode<>(element);
+        node.setNext(head);
+        head = node;
 
-	@Override
-	public void addToRear(E element) {
-		LinearNode<E> newNode = new LinearNode<>(element);
-		if (isEmpty()) {
-			front = rear = newNode;
-		} else {
-			rear.setNext(newNode);
-			rear = newNode;
-			;
-		}
+        if (size == 0) rear = node;
 
-		count++;
-		modCount++;
-	}
+        size++;
+        modCount++;
+    }
 
-	@Override
-	public void add(E element) {
-		addToRear(element);
-	}
+    public void addToRear(E element) {
+        LinearNode<E> node = new LinearNode<>(element);
 
-	@Override
-	public void addAfter(E element, E target) {
-		if (!contains(target)) {
-			throw new NoSuchElementException();
-		}
+        if (size == 0) {
+            head = rear = node;
+        } else {
+            rear.setNext(node);
+            rear = node;
+        }
 
-		LinearNode<E> current = front;
-		while (current != null && !current.getElement().equals(target)) {
-			current = current.getNext();
-		}
+        size++;
+        modCount++;
+    }
 
-		LinearNode<E> newNode = new LinearNode<>(element);
-		newNode.setNext(current.getNext());
-		current.setNext(newNode);
+    public void add(E element) {
+        addToRear(element);
+    }
 
-		if (current == rear) {
-			rear = newNode;
-		}
+    public void addAfter(E element, E target) {
+        LinearNode<E> current = head;
 
-		count++;
-		modCount++;
-	}
+        while (current != null && !current.getElement().equals(target)) {
+            current = current.getNext();
+        }
 
-	@Override
-	public void add(int index, E element) {
-		if (index < 0 || index > count) {
-			throw new IndexOutOfBoundsException();
-		}
+        if (current == null) throw new NoSuchElementException();
 
-		if (index == 0) {
-			addToFront(element);
-		} else if (index == count) {
-			addToRear(element);
-		} else {
-			LinearNode<E> current = front, previous = null;
-			for (int i = 0; i < index; i++) {
-				previous = current;
-				current = current.getNext();
-			}
+        LinearNode<E> node = new LinearNode<>(element);
+        node.setNext(current.getNext());
+        current.setNext(node);
 
-			LinearNode<E> newNode = new LinearNode<>(element);
-			newNode.setNext(current);
-			previous.setNext(newNode);
+        if (current == rear) rear = node;
 
-			count++;
-			modCount++;
-		}
-	}
+        size++;
+        modCount++;
+    }
 
-	@Override
-	public E removeFirst() {
-		return remove(first());
-	}
+    public void add(int index, E element) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
 
-	@Override
-	public E removeLast() {
-		return remove(last());
-	}
+        if (index == 0) {
+            addToFront(element);
+            return;
+        }
 
-	@Override
-	public E remove(E element) {
-		if (isEmpty()) {
-			throw new NoSuchElementException();
-		}
-		LinearNode<E> current = front, previous = null;
-		while (current != null && !current.getElement().equals(element)) {
-			previous = current;
-			current = current.getNext();
-		}
-		// Matching element not found
-		if (current == null) {
-			throw new NoSuchElementException();
-		}
-		return removeElement(previous, current);
-	}
+        if (index == size) {
+            addToRear(element);
+            return;
+        }
 
-	@Override
-	public E remove(int index) {
-		if (index < 0 || index >= count) {
-			throw new IndexOutOfBoundsException();
-		}
+        LinearNode<E> previous = getNode(index - 1);
+        LinearNode<E> node = new LinearNode<>(element);
 
-		LinearNode<E> current = front, previous = null;
-		for (int i = 0; i < index; i++) {
-			previous = current;
-			current = current.getNext();
-		}
+        node.setNext(previous.getNext());
+        previous.setNext(node);
 
-		return removeElement(previous, current);
-	}
+        size++;
+        modCount++;
+    }
 
-	@Override
-	public void set(int index, E element) {
-		if (index < 0 || index >= count) {
-			throw new IndexOutOfBoundsException();
-		}
+    // ---------- REMOVE METHODS ----------
 
-		LinearNode<E> current = front;
-		for (int i = 0; i < index; i++) {
-			current = current.getNext();
-		}
+    public E removeFirst() {
+        if (isEmpty()) throw new NoSuchElementException();
 
-		current.setElement(element);
+        E result = head.getElement();
+        head = head.getNext();
 
-		modCount++;
-	}
+        if (head == null) rear = null;
 
-	@Override
-	public E get(int index) {
-		if (index < 0 || index >= count) {
-			throw new IndexOutOfBoundsException();
-		}
+        size--;
+        modCount++;
+        return result;
+    }
 
-		LinearNode<E> current = front;
-		for (int i = 0; i < index; i++) {
-			current = current.getNext();
-		}
+    public E removeLast() {
+        if (isEmpty()) throw new NoSuchElementException();
 
-		return current.getElement();
-	}
+        if (size == 1) return removeFirst();
 
-	@Override
-	public int indexOf(E element) {
-		LinearNode<E> current = front;
-		int index = 0;
-		while (current != null) {
-			if (current.getElement().equals(element)) {
-				return index;
-			}
+        LinearNode<E> previous = getNode(size - 2);
+        E result = rear.getElement();
 
-			current = current.getNext();
-			index++;
-		}
+        previous.setNext(null);
+        rear = previous;
 
-		// Element not found
-		return -1;
-	}
+        size--;
+        modCount++;
+        return result;
+    }
 
-	@Override
-	public E first() {
-		if (isEmpty()) {
-			throw new NoSuchElementException();
-		}
+    public E remove(E element) {
+        if (isEmpty()) throw new NoSuchElementException();
 
-		return front.getElement();
-	}
+        LinearNode<E> current = head;
+        LinearNode<E> previous = null;
 
-	@Override
-	public E last() {
-		if (isEmpty()) {
-			throw new NoSuchElementException();
-		}
+        while (current != null && !current.getElement().equals(element)) {
+            previous = current;
+            current = current.getNext();
+        }
 
-		return rear.getElement();
-	}
+        if (current == null) throw new NoSuchElementException();
 
-	@Override
-	public boolean contains(E target) {
-		return indexOf(target) != -1;
-	}
+        return unlink(previous, current);
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return size() == 0;
-	}
+    public E remove(int index) {
+        if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
 
-	@Override
-	public int size() {
-		return count;
-	}
+        if (index == 0) return removeFirst();
 
-	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder("[");
-		LinearNode<E> current = front;
-		while (current != null) {
-			result.append(current.getElement());
-			if (current.getNext() != null) {
-				result.append(", ");
-			}
+        LinearNode<E> previous = getNode(index - 1);
+        return unlink(previous, previous.getNext());
+    }
 
-			current = current.getNext();
-		}
+    private E unlink(LinearNode<E> previous, LinearNode<E> current) {
+        E result = current.getElement();
 
-		result.append("]");
-		return result.toString();
-	}
+        if (previous == null) {
+            head = current.getNext();
+        } else {
+            previous.setNext(current.getNext());
+        }
 
-	private E removeElement(LinearNode<E> previous, LinearNode<E> current) {
-		// Grab element
-		E result = current.getElement();
-		// If not the first element in the list
-		if (previous != null) {
-			previous.setNext(current.getNext());
-		} else { // If the first element in the list
-			front = current.getNext();
-		}
-		// If the last element in the list
-		if (current.getNext() == null) {
-			rear = previous;
-		}
-		count--;
-		modCount++;
+        if (current == rear) {
+            rear = previous;
+        }
 
-		return result;
-	}
+        size--;
+        modCount++;
+        return result;
+    }
 
-	@Override
-	public Iterator<E> iterator() {
-		return new SLLIterator();
-	}
+    // ---------- ACCESS METHODS ----------
 
-	/** Iterator for IUSingleLinkedList */
-	private class SLLIterator implements Iterator<E> {
-		private LinearNode<E> previous;
-		private LinearNode<E> current;
-		private LinearNode<E> next;
-		private int iterModCount;
-		private boolean canRemove;
+    public void set(int index, E element) {
+        getNode(index).setElement(element);
+        modCount++;
+    }
 
-		/** Creates a new iterator for the list */
-		public SLLIterator() {
-			previous = null;
-			current = null;
-			next = front;
-			iterModCount = modCount;
-			canRemove = false;
-		}
+    public E get(int index) {
+        return getNode(index).getElement();
+    }
 
-		@Override
-		public boolean hasNext() {
-			if (iterModCount != modCount) {
-				throw new ConcurrentModificationException();
-			}
+    public int indexOf(E element) {
+        LinearNode<E> current = head;
+        int i = 0;
 
-			return next != null;
-		}
+        while (current != null) {
+            if (current.getElement().equals(element)) return i;
+            current = current.getNext();
+            i++;
+        }
 
-		@Override
-		public E next() {
-			if (!hasNext()) {
-				throw new NoSuchElementException();
-			}
+        return -1;
+    }
 
-			previous = current;
-			current = next;
-			next = next.getNext();
-			canRemove = true;
-			return current.getElement();
-		}
+    public E first() {
+        if (isEmpty()) throw new NoSuchElementException();
+        return head.getElement();
+    }
 
-		@Override
-		public void remove() {
-			if (iterModCount != modCount) {
-				throw new ConcurrentModificationException();
-			}
+    public E last() {
+        if (isEmpty()) throw new NoSuchElementException();
+        return rear.getElement();
+    }
 
-			if (!canRemove) {
-				throw new IllegalStateException();
-			}
+    public boolean contains(E target) {
+        return indexOf(target) != -1;
+    }
 
-			if (current == front) {
-				front = front.getNext();
-				if (front == null) {
-					rear = null;
-				}
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-				current = null;
-			} else {
-				LinearNode<E> tempNode = front;
-				while (tempNode != null && tempNode.getNext() != current) {
-					tempNode = tempNode.getNext();
-				}
+    public int size() {
+        return size;
+    }
 
-				tempNode.setNext(current.getNext());
-				if (current == rear) {
-					rear = tempNode;
-				}
+    private LinearNode<E> getNode(int index) {
+        if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
 
-				current = previous;
-			}
+        LinearNode<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        return current;
+    }
 
-			count--;
-			iterModCount++;
-			modCount++;
-		}
-	}
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        LinearNode<E> current = head;
+
+        while (current != null) {
+            sb.append(current.getElement());
+            if (current.getNext() != null) sb.append(", ");
+            current = current.getNext();
+        }
+
+        return sb.append("]").toString();
+    }
+
+    // ---------- ITERATOR ----------
+
+    public Iterator<E> iterator() {
+        return new SLLIterator();
+    }
+
+    private class SLLIterator implements Iterator<E> {
+
+        private LinearNode<E> previous = null;
+        private LinearNode<E> current = null;
+        private LinearNode<E> next = head;
+        private int expectedMod = modCount;
+        private boolean canRemove = false;
+
+        public boolean hasNext() {
+            checkMod();
+            return next != null;
+        }
+
+        public E next() {
+            checkMod();
+            if (next == null) throw new NoSuchElementException();
+
+            previous = current;
+            current = next;
+            next = next.getNext();
+
+            canRemove = true;
+            return current.getElement();
+        }
+
+        public void remove() {
+            checkMod();
+            if (!canRemove) throw new IllegalStateException();
+
+            if (current == head) {
+                head = head.getNext();
+                if (head == null) rear = null;
+            } else {
+                previous.setNext(current.getNext());
+                if (current == rear) rear = previous;
+            }
+
+            current = previous;
+            size--;
+            modCount++;
+            expectedMod++;
+        }
+
+        private void checkMod() {
+            if (expectedMod != modCount)
+                throw new ConcurrentModificationException();
+        }
+    }
 
 	// IGNORE THE FOLLOWING CODE
 	// DON'T DELETE ME, HOWEVER!!!

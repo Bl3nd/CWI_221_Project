@@ -308,12 +308,12 @@ public class ListTester {
 	private IndexedUnsortedList<Integer> newList() {
 		IndexedUnsortedList<Integer> listToUse;
 		switch (LIST_TO_USE) {
-			case goodList:
-				listToUse = new GoodList<Integer>();
-				break;
-			case badList:
-				listToUse = new BadList<Integer>();
-				break;
+			// case goodList:
+			// 	listToUse = new GoodList<Integer>();
+			// 	break;
+			// case badList:
+			// 	listToUse = new BadList<Integer>();
+			// 	break;
 			case arrayList:
 				listToUse = new IUArrayList<Integer>();
 				break;
@@ -486,7 +486,7 @@ public class ListTester {
 	 * @return [B] after set(0,B)
 	 */
 	private IndexedUnsortedList<Integer> A_set0B_B() {
-		IndexedUnsortedList<Integer> list = AB_removeLast_A();
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
 		list.set(0, ELEMENT_B);
 		return list;
 	}
