@@ -117,7 +117,6 @@ public class IUSingleLinkedList<E extends Comparable<E>> implements IndexedUnsor
 	@Override
 	public E removeFirst() {
 		// TODO 
-
 		return remove(first());
 
 	}
@@ -125,7 +124,6 @@ public class IUSingleLinkedList<E extends Comparable<E>> implements IndexedUnsor
 	@Override
 	public E removeLast() {
 		// TODO 
-
 		return remove(last());
 
 	}
@@ -252,39 +250,21 @@ public class IUSingleLinkedList<E extends Comparable<E>> implements IndexedUnsor
 	public String toString() {
 		// TODO
 
-		StringBuilder result = new StringBuilder("[");
-		LinearNode<E> current = front;
-		while (current != null) {
-			result.append(current.getElement());
-			if (current.getNext() != null) {
-				result.append(", ");
-			}
+		String result = "[";
+    	LinearNode<E> current = front;
+    	while (current != null) {
+        	if (current != front) {
+            	result += ", ";
+        	}
 
-			current = current.getNext();
-		}
+        result += current.getElement();
+        current = current.getNext();
+    	}
 
-		result.append("]");
-		return result.toString();
-
-		// String result = "[";
-		// LinearNode<E> current = front;
-		// do {
-		// 	result += current.getElement() + "\n";
-		// 	current = current.getNext();
-		// } while(current != null);
-
-		// return result;
-
-		// String result = "[";
-		// LinearNode<E> current = front;
-		// while(current != null) {
-		// 	result += current.getElement() + "\n";
-		// 	current = current.getNext();
-		// }
-		// return result;
-
-
+    	result += "]";
+    	return result;
 	}
+
 
 	private E removeElement(LinearNode<E> previous, LinearNode<E> current) {
 		// Grab element
