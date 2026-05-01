@@ -252,19 +252,19 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E> {
 
     private E removeElement(BidirectionalNode<E> previous, BidirectionalNode<E> current) {
         E result = current.getElement();
-        BidirectionalNode<E> succ = current.getNext();
+        BidirectionalNode<E> next = current.getNext();
 
         if (previous != null) {
-            previous.setNext(succ);
+            previous.setNext(next);
         } else {
-            front = succ;
+            front = next;
             if (front != null) {
                 front.setPrevious(null);
             }
         }
 
-        if (succ != null) {
-            succ.setPrevious(previous);
+        if (next != null) {
+            next.setPrevious(previous);
         } else {
             rear = previous;
         }
