@@ -1,5 +1,7 @@
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.ConcurrentModificationException;
 
 public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
     private BidirectionalNode<E> head, tail;
@@ -54,7 +56,8 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
 
     @Override
     public void add(int index, E element) {
-        listIterator(index).add(element);
+        ListIterator<E> lit = listIterator(index);
+        lit.add(element);
     }
 
     @Override
@@ -112,9 +115,13 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
     @Override
     public void set(int index, E element) {
         if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
-        ListIterator<E> lit = listIterator(index);
-        lit.next();
-        lit.set(element);
+        BidirectionalNode<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        current.setElement(element);
+
+        modCount++;
     }
 
     @Override
@@ -195,7 +202,7 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
         return sb.toString();
     }
 
-    private class DLLIterator implements ListIterator<E>, Iterator<E> {
+    private class DLLIterator implements ListIterator<E>{
         private BidirectionalNode<E> nextNode;
         private BidirectionalNode<E> lastReturned;
         private int nextIndex;
@@ -222,6 +229,7 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
 
         @Override
         public E next() {
+            checkMod();
             if (!hasNext()) throw new java.util.NoSuchElementException();
             lastReturned = nextNode;
             nextNode = nextNode.getNext();
@@ -238,11 +246,11 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
         @Override
         public E previous() {
             if (!hasPrevious()) {
-                throw new java.util.NoSuchElementException();
+                throw new NoSuchElementException();
             }
             
-            if (nextNode == null) {
-                nextNode = tail;
+            if (nextNode == null) { 
+                nextNode = tail; 
             } else {
                 nextNode = nextNode.getPrevious();
             }
@@ -270,6 +278,7 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
             checkMod();
             if (lastReturned == null) throw new IllegalStateException();
             lastReturned.setElement(e);
+
             modCount++;
             iterModCount++;
         }
@@ -331,21 +340,19 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E>{
                 nextIndex--;
             }
 
-            if (nextIndex == size - 1 && nextNode == lastReturned) {
-                nextNode = n;
-            }
-
-            lastReturned.setNext(null);
-            lastReturned.setPrevious(null);
-
             lastReturned = null;
             size--;
             modCount++;
             iterModCount++;
+                        
+            if (size == 0) {
+                head = tail = nextNode = null;
+                nextIndex = 0;
+            }
         }
 
         private void checkMod() {
-            if (modCount != iterModCount) throw new java.util.ConcurrentModificationException();
+            if (modCount != iterModCount) throw new ConcurrentModificationException();
         }
     }
     
