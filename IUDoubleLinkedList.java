@@ -431,7 +431,9 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E> {
             }
 
             if (lastReturned == nextNode) {
-                nextNode = nextNode.getNext();
+                if (nextNode != null) {
+                    nextNode = nextNode.getNext();
+                }
             } else {
                 nextIndex--;
             }
@@ -477,7 +479,7 @@ public class IUDoubleLinkedList<E> implements IndexedUnsortedList<E> {
                 count++;
                 modCount++;
             }
-
+            
             iterModCount++;
         }
     }
