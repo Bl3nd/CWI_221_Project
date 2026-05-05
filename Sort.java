@@ -63,7 +63,34 @@ public class Sort {
 	 *            The list to be sorted, implements IndexedUnsortedList interface 
 	 */
 	private static <E extends Comparable<E>> void quicksort(IndexedUnsortedList<E> list) {
-		// TODO: Implement recursive quicksort algorithm 
+		if (list.size() <= 1) {
+			return;
+		}
+
+		E partitionElement = list.removeFirst();
+		IndexedUnsortedList<E> leftSide = newList();
+		IndexedUnsortedList<E> rightSide = newList();
+		int remaining = list.size();
+		for (int i = 0; i < remaining; i++) {
+			E element = list.removeFirst();
+			if (element.compareTo(partitionElement) < 0) {
+				leftSide.add(element);
+			} else {
+				rightSide.add(element);
+			}
+		}
+
+		
+		quicksort(leftSide);
+		quicksort(rightSide);
+		
+		for (E element : leftSide) {
+			list.add(element);
+		}
+		list.add(partitionElement);
+		for (E element : rightSide) {
+			list.add(element);
+		}
 	}
 		
 	/**
@@ -80,8 +107,34 @@ public class Sort {
 	 *            The Comparator used
 	 */
 	private static <E> void quicksort(IndexedUnsortedList<E> list, Comparator<E> c) {
-		// TODO: Implement recursive quicksort algorithm using Comparator
+		if (list.size() <= 1) {
+			return;
+		}
 
+		E partitionElement = list.removeFirst();
+		IndexedUnsortedList<E> leftSide = newList();
+		IndexedUnsortedList<E> rightSide = newList();
+		int remaining = list.size();
+		for (int i = 0; i < remaining; i++) {
+			E element = list.removeFirst();
+			if (c.compare(element, partitionElement) < 0) {
+				leftSide.add(element);
+			} else {
+				rightSide.add(element);
+			}
+		}
+
+		
+		quicksort(leftSide, c);
+		quicksort(rightSide, c);
+		
+		for (E element : leftSide) {
+			list.add(element);
+		}
+		list.add(partitionElement);
+		for (E element : rightSide) {
+			list.add(element);
+		}
 	}
 	
 }
