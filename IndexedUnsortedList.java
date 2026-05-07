@@ -2,38 +2,35 @@ import java.util.*;
 
 /**
  *  Interface for an Iterable, Indexed, Unsorted List ADT.
- *  Iterators and ListIterators provided by the list are required
- *  to be "fail-fast" and throw ConcurrentModificationException if
- *  the iterator detects any change to the list from another source. 
  *  Note: "Unsorted" only means that it is not inherently maintained
  *  in a sorted order. It may or may not be sorted.
  *
  * @author CS 221
  *
- * @param <E> - class of objects stored in the list 
+ * @param <T> - class of objects stored in the list 
  */
-public interface IndexedUnsortedList<E> extends Iterable<E>
+public interface IndexedUnsortedList<T> extends Iterable<T>
 {
     /**  
      * Adds the specified element to the front of this list. 
      *
      * @param element the element to be added to the front of this list    
      */
-    public void addToFront(E element);  
+    public void addToFront(T element);  
 
     /**  
      * Adds the specified element to the rear of this list. 
      *
      * @param element the element to be added to the rear of this list    
      */
-    public void addToRear(E element); 
+    public void addToRear(T element); 
 
     /**  
      * Adds the specified element to the rear of this list. 
      *
      * @param element  the element to be added to the rear of the list    
      */
-    public void add(E element);
+    public void add(T element);
 
     /**  
      * Adds the specified element after the specified target. 
@@ -42,7 +39,7 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      * @param target  the target is the item that the element will be added after
      * @throws NoSuchElementException if target element is not in this list
      */
-    public void addAfter(E element, E target);
+    public void addAfter(T element, T target);
     
     /**  
      * Inserts the specified element at the specified index. 
@@ -51,32 +48,32 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      * @param element the element to be inserted into the array
      * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size)
      */
-    public void add(int index, E element);
+    public void add(int index, T element);
 
     /**  
      * Removes and returns the first element from this list. 
      * 
      * @return the first element from this list
-     * @throws NoSuchElementException if list contains no elements
+     * @throws IllegalStateException if list contains no elements
      */
-    public E removeFirst();
+    public T removeFirst();
 
     /**  
      * Removes and returns the last element from this list. 
      *
      * @return the last element from this list
-     * @throws NoSuchElementException if list contains no elements
+     * @throws IllegalStateException if list contains no elements
      */
-    public E removeLast();
+    public T removeLast();
 
     /**  
-     * Removes and returns the first element from the list matching the specified element.
+     * Removes and returns the specified element from this list. 
      *
      * @param element the element to be removed from the list
      * @return removed element
      * @throws NoSuchElementException if element is not in this list
      */
-    public E remove(E element);
+    public T remove(T element);
 
     /**  
      * Removes  and returns the element at the specified index. 
@@ -85,7 +82,7 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      * @return the element at the given index
      * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size)
      */
-    public E remove(int index); 
+    public T remove(int index); 
         
     /**  
      * Sets the element at the specified index. 
@@ -94,7 +91,7 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      * @param element the element to be set into the list
      * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size)
      */
-    public void set(int index, E element);
+    public void set(int index, T element);
 
     /**  
      * Returns a reference to the element at the specified index. 
@@ -103,31 +100,31 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      * @return the element at the specified index
      * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size)
      */
-    public E get(int index);
+    public T get(int index);
 
     /**  
-     * Returns the index of the first element from the list matching the specified element. 
+     * Returns the index of the specified element. 
      *
      * @param element  the element for the index is to be retrieved
      * @return the integer index for this element or -1 if element is not in the list    
      */
-    public int indexOf(E element);
+    public int indexOf(T element);
 
     /**  
      * Returns a reference to the first element in this list. 
      *
      * @return a reference to the first element in this list
-     * @throws NoSuchElementException if list contains no elements
+     * @throws IllegalStateException if list contains no elements
      */
-    public E first();
+    public T first();
 
     /**  
      * Returns a reference to the last element in this list. 
      *
      * @return a reference to the last element in this list
-     * @throws NoSuchElementException if list contains no elements
+     * @throws IllegalStateException if list contains no elements
      */
-    public E last();
+    public T last();
 
     /**  
      * Returns true if this list contains the specified target element. 
@@ -135,7 +132,7 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      * @param target the target that is being sought in the list
      * @return true if the list contains this element, else false
      */
-    public boolean contains(E target);
+    public boolean contains(T target);
 
     /**  
      * Returns true if this list contains no elements. 
@@ -163,7 +160,7 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      *
      * @return an Iterator over the elements in this list
      */
-    public Iterator<E> iterator();
+    public Iterator<T> iterator();
 
     /**  
      * Returns a ListIterator for the elements in this list. 
@@ -172,7 +169,7 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      *
      * @throws UnsupportedOperationException if not implemented
      */
-    public ListIterator<E> listIterator();
+    public ListIterator<T> listIterator();
 
     /**  
      * Returns a ListIterator for the elements in this list, with
@@ -182,5 +179,5 @@ public interface IndexedUnsortedList<E> extends Iterable<E>
      *
      * @throws UnsupportedOperationException if not implemented
      */
-    public ListIterator<E> listIterator(int startingIndex);
+    public ListIterator<T> listIterator(int startingIndex);
 }
