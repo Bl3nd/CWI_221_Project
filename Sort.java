@@ -63,78 +63,67 @@ public class Sort {
 	 *            The list to be sorted, implements IndexedUnsortedList interface 
 	 */
 	private static <E extends Comparable<E>> void quicksort(IndexedUnsortedList<E> list) {
-		if (list.size() <= 1) {
-			return;
-		}
+        // Base case: list is empty or has one element
+        if (list.size() <= 1) {
+            return;
+        }
 
-		E partitionElement = list.removeFirst();
-		IndexedUnsortedList<E> leftSide = newList();
-		IndexedUnsortedList<E> rightSide = newList();
-		int remaining = list.size();
-		for (int i = 0; i < remaining; i++) {
-			E element = list.removeFirst();
-			if (element.compareTo(partitionElement) < 0) {
-				leftSide.add(element);
-			} else {
-				rightSide.add(element);
-			}
-		}
+        E pivot = list.removeFirst();
+        IndexedUnsortedList<E> left = newList();
+        IndexedUnsortedList<E> right = newList();
 
-		
-		quicksort(leftSide);
-		quicksort(rightSide);
-		
-		for (E element : leftSide) {
-			list.add(element);
-		}
-		list.add(partitionElement);
-		for (E element : rightSide) {
-			list.add(element);
-		}
-	}
-		
-	/**
-	 * Quicksort algorithm to sort objects in a list 
-	 * that implements the IndexedUnsortedList interface,
-	 * using the given Comparator.
-	 * DO NOT MODIFY THIS METHOD SIGNATURE
-	 * 
-	 * @param <E>
-	 *            The class of elements in the list
-	 * @param list
-	 *            The list to be sorted, implements IndexedUnsortedList interface 
-	 * @param c
-	 *            The Comparator used
-	 */
-	private static <E> void quicksort(IndexedUnsortedList<E> list, Comparator<E> c) {
-		if (list.size() <= 1) {
-			return;
-		}
+        while (!list.isEmpty()) {
+            E current = list.removeFirst();
+            if (current.compareTo(pivot) < 0) {
+                left.addToRear(current); // Use your interface's addToRear
+            } else {
+                right.addToRear(current);
+            }
+        }
 
-		E partitionElement = list.removeFirst();
-		IndexedUnsortedList<E> leftSide = newList();
-		IndexedUnsortedList<E> rightSide = newList();
-		int remaining = list.size();
-		for (int i = 0; i < remaining; i++) {
-			E element = list.removeFirst();
-			if (c.compare(element, partitionElement) < 0) {
-				leftSide.add(element);
-			} else {
-				rightSide.add(element);
-			}
-		}
+        quicksort(left);
+        quicksort(right);
 
-		
-		quicksort(leftSide, c);
-		quicksort(rightSide, c);
-		
-		for (E element : leftSide) {
-			list.add(element);
-		}
-		list.add(partitionElement);
-		for (E element : rightSide) {
-			list.add(element);
-		}
-	}
-	
+        while (!left.isEmpty()) {
+            list.addToRear(left.removeFirst());
+        }
+        list.addToRear(pivot);
+        while (!right.isEmpty()) {
+            list.addToRear(right.removeFirst());
+        }
+    }
+
+    /**
+     * Quicksort algorithm using Comparator.
+     */
+    private static <E> void quicksort(IndexedUnsortedList<E> list, Comparator<E> c) {
+        // Base case
+        if (list.size() <= 1) {
+            return;
+        }
+
+        E pivot = list.removeFirst();
+        IndexedUnsortedList<E> left = newList();
+        IndexedUnsortedList<E> right = newList();
+
+        while (!list.isEmpty()) {
+            E current = list.removeFirst();
+            if (c.compare(current, pivot) < 0) {
+                left.addToRear(current);
+            } else {
+                right.addToRear(current);
+            }
+        }
+
+        quicksort(left, c);
+        quicksort(right, c);
+
+        while (!left.isEmpty()) {
+            list.addToRear(left.removeFirst());
+        }
+        list.addToRear(pivot);
+        while (!right.isEmpty()) {
+            list.addToRear(right.removeFirst());
+        }
+    }
 }
